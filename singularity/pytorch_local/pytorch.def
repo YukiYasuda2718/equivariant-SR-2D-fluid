@@ -1,0 +1,23 @@
+Bootstrap: docker
+From: pytorch/pytorch:1.8.0-cuda11.1-cudnn8-runtime
+
+%files
+    ./docker/pytorch/Pipfile /workspace/
+    ./docker/pytorch/Pipfile.lock /workspace/
+    # The library dependency and JupyterLab configs are the same as in Docker image.
+
+%environment
+    export PATH=/workspace/.local/bin:$PATH
+
+%post
+    # libgl1-mesa-dev is necessary for opencv2
+    apt-get update
+    apt-get install -y less git curl wget zsh libgl1-mesa-dev
+    apt-get autoremove -y
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+    cd /workspace
+    pip install -U pip pipenv
+    pipenv install --system --dev --ignore-pipfile
+    rm -rf .cache/pip .cache/pipenv Pipfile Pipfile.lock

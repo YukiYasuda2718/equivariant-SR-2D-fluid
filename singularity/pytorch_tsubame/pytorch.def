@@ -1,0 +1,62 @@
+Bootstrap: docker
+From: nvidia/cuda:10.2-cudnn8-devel-centos7
+
+# Ref: https://discuss.pytorch.org/t/segfault-using-cuda-with-openmpi/11140/2
+# Ref: https://github.com/pytorch/pytorch#from-source
+# Ref: https://pytorch.org/tutorials/intermediate/dist_tuto.html#communication-backends
+# Ref: https://github.com/sylabs/examples/blob/master/machinelearning/horovod/horovod.def
+# Ref: https://helpdesk.t3.gsic.titech.ac.jp/manuals/handbook.ja/freesoft/#singularity
+
+%files
+    ./singularity/pytorch_tsubame/Pipfile /workspace/
+    ./singularity/pytorch_tsubame/Pipfile.lock /workspace/
+
+%environment
+    # Environment variables used when container is run.
+    export PATH=/opt/rh/rh-python38/root/bin:/opt/rh/rh-python38/root/usr/local/bin:/opt/rh/devtoolset-7/root/usr/bin:$PATH
+    export CC=/opt/rh/devtoolset-7/root/usr/bin/gcc
+    export CXX=/opt/rh/devtoolset-7/root/usr/bin/g++    
+    export LC_ALL=en_US.UTF-8
+    
+%post
+    # Environment variables used when container is built.
+    export PATH=/opt/rh/rh-python38/root/bin:/opt/rh/rh-python38/root/usr/local/bin:/opt/rh/devtoolset-7/root/usr/bin:$PATH
+    export CC=/opt/rh/devtoolset-7/root/usr/bin/gcc
+    export CXX=/opt/rh/devtoolset-7/root/usr/bin/g++    
+    export LC_ALL=en_US.UTF-8
+
+    # Install wget and gcc
+    # To avoid 404 errors for yum repositories, first install wget with --disablerepo=updates
+    yum --disablerepo=updates install -y wget
+    yum install -y centos-release-scl
+    yum install -y devtoolset-7 less
+    scl enable devtoolset-7 bash
+    
+    # Install IB verbs (InfiniBand Verbs), which are necessary for NCCL (GPU communications)
+    yum install -y libibverbs* librdmacm* infiniband-diags libmlx4* libmlx5* libnuma*
+
+    # Install Intel OPA driver (necessary for MPI on TSUBAME)
+    # Ref: https://helpdesk.t3.gsic.titech.ac.jp/manuals/handbook.ja/freesoft/#singularity
+    cd /workspace
+    wget https://downloads.hpe.com/pub/softlib2/software1/pubsw-linux/p869664225/v174671/IntelOPA-IFS.RHEL76-x86_64.10.10.0.0.445.tgz
+    tar xzvf IntelOPA-IFS.RHEL76-x86_64.10.10.0.0.445.tgz
+    cd IntelOPA-IFS.RHEL76-x86_64.10.10.0.0.445/IntelOPA-OFA_DELTA.RHEL76-x86_64.10.10.0.0.447/RPMS/redhat-ES76/CUDA
+    yum install -y numactl-libs hwloc-libs libfabric libibverbs infinipath-psm
+    rpm --force -ivh libpsm2-*.rpm
+    cd /workspace
+    rm -rf IntelOPA-IFS.RHEL76-x86_64.10.10.0.0.445*
+
+    # Install Git (to download newer one, add repositories)
+    yum -y install https://repo.ius.io/ius-release-el7.rpm
+    yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    yum -y install curl-devel expat-devel gettext-devel openssl-devel perl-devel zlib-devel
+
+    # Install python libraries including torch and torchvision
+    # Ref: https://download.pytorch.org/whl/torch_stable.html
+    # Ref: https://github.com/pytorch/vision
+    cd /workspace
+    yum install -y centos-release-scl
+    yum install -y rh-python38-2.0-4.el7.x86_64
+    pip3 install pipenv
+    pipenv install --system --ignore-pipfile
+    

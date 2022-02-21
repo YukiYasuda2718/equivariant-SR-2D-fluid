@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+torch = {file = "https://download.pytorch.org/whl/cu102/torch-1.8.0-cp38-cp38-linux_x86_64.whl"}
+torchvision = {file = "https://download.pytorch.org/whl/cu102/torchvision-0.9.0-cp38-cp38-linux_x86_64.whl"}
+scikit-learn = "*"
+pandas = "*"
+scipy = "*"
+numpy = "*"
+tqdm = "*"
+pyyaml = "*"
+opencv-python = "*"
+torch-tb-profiler = "*"
+tensorboard = "*"
+torchinfo = "*"
+e2cnn = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
