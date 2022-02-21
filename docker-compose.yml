@@ -1,0 +1,32 @@
+version: "3"
+services:
+  pytorch:
+    shm_size: "10gb"
+    build:
+      context: ./docker/pytorch
+    tty: true
+    ports:
+      - "8888:8888"
+      - "6006:6006"
+    volumes:
+      - ./data:/workspace/data:cached
+      - ./log:/workspace/log:cached
+      - ./pytorch:/workspace/pytorch:cached
+      - ./script:/workspace/script:cached
+    command: jupyter lab --no-browser --ip=0.0.0.0 --allow-root --LabApp.token=''
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+  fortran:
+    build:
+      context: ./docker/fortran
+    tty: true
+    volumes:
+      - ./data:/workspace/data:cached
+      - ./log:/workspace/log:cached
+      - ./fortran:/workspace/fortran:cached
+      - ./script:/workspace/script:cached
