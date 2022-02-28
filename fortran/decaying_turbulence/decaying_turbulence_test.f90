@@ -1,6 +1,6 @@
 module global
     implicit none
-    character(200), parameter :: DATA_DIR_PATH = "/workspace/Datasets-d/2D-turbulence-SR/fortran/decaying_turbulence/test"
+    character(200), parameter :: DATA_DIR_PATH = "/workspace/data/fortran/decaying_turbulence/test"
 
     integer, parameter :: KM = 42, LM = 42
     integer, parameter :: KMAX = KM
