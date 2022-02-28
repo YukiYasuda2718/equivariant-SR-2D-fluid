@@ -9,7 +9,7 @@ RUN useradd -M vscode && \
 
 # Install GNU libraries and fprettify
 RUN apt-get update && \
-    apt-get install -y less git curl zsh nano build-essential openmpi-bin libopenmpi-dev && \
+    apt-get install -y less git wget curl zsh nano build-essential openmpi-bin libopenmpi-dev && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

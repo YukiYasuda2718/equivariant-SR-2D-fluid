@@ -2,6 +2,8 @@ This repository contains the source code used in *Roto-Translation Equivariant S
 
 - [Setup](#setup)
 - [Docker containers](#docker-containers)
+  - [Fortran](#fortran)
+  - [PyTorch](#pytorch)
 - [Singularity containers](#singularity-containers)
 
 # Setup
@@ -12,4 +14,23 @@ This repository contains the source code used in *Roto-Translation Equivariant S
 
 # Docker containers
 
+## Fortran
+
+- The Fortran container is used to perform the fluid simulations
+- The simulations can be conducted as follows
+```
+$ ./script/peform_fortran_experiments.sh
+```
+
+## PyTorch
+
+- The PyTorch container is used to train the models and to analyze data.
+  - The JupyterLab can be utilized: [localhost:8888](http://localhost:8888/)
+
 # Singularity containers
+
+- Singularity containers are used to train models on [TSUBAME3](https://www.gsic.titech.ac.jp/en)
+- The container is built as follows
+```
+$ singularity build -f pytorch.sif ./singularity/pytorch_tsubame/pytorch.def
+```
