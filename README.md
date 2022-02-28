@@ -19,7 +19,7 @@ This repository contains the source code used in *Roto-Translation Equivariant S
 - The Fortran container is used to perform the fluid simulations
 - The simulations can be conducted as follows
 ```
-$ ./script/peform_fortran_experiments.sh
+$ ./script/conduct_fortran_experiments.sh
 ```
 
 ## PyTorch
