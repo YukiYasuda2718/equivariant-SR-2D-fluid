@@ -343,7 +343,7 @@ program main
     real(8), allocatable :: VORTEX(:,:)
 
     call getarg(ARG_POSITION,CONFIG_NAME)
-    csv_path = "/workspace/fortran/barotropic_instability_without_spectral_nudging/config/" // trim(CONFIG_NAME) // ".csv"
+    csv_path = "/workspace/fortran/barotropic_instability/config/" // trim(CONFIG_NAME) // ".csv"
     write(*,*) "Config = ", csv_path
     
     NUDGE_KM = WAVENUMBERS(1)
