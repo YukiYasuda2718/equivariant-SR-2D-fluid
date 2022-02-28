@@ -1,4 +1,4 @@
-This repository contains the source code used in *Roto-Translation Equivariant Super-Resolution of Two-Dimensional Flows Using Convolutional Neural Networks*.
+This repository contains the source code used in [*Roto-Translation Equivariant Super-Resolution of Two-Dimensional Flows Using Convolutional Neural Networks*](https://arxiv.org/abs/2202.11099).
 
 - [Setup](#setup)
 - [Docker containers](#docker-containers)
