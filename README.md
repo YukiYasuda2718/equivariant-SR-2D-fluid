@@ -7,6 +7,8 @@ This repository contains the source code used in [*Roto-Translation Equivariant 
 - [Singularity containers](#singularity-containers)
 - [Experiments](#experiments)
   - [How to make train and test data](#how-to-make-train-and-test-data)
+  - [How to train models](#how-to-train-models)
+- [Cite](#cite)
 
 # Setup
 
@@ -21,9 +23,6 @@ This repository contains the source code used in [*Roto-Translation Equivariant 
 - The Fortran container is used to perform the fluid simulations
 - The simulations can be conducted as follows
   - **The total data size will be about 220 GB.**
-```
-$ ./script/conduct_fortran_experiments.sh
-```
 
 ## PyTorch
 
@@ -46,4 +45,20 @@ $ singularity build -f pytorch.sif ./singularity/pytorch_tsubame/pytorch.def
 
 1. Conduct the Fortran numerical experiments: `$ ./script/conduct_fortran_experiments.sh`
 2. Make the train and test data using each notebook in `./pytorch/notebook`
-   
+
+## How to train models
+
+WIP
+
+# Cite
+
+```
+@misc{yasuda2022eqsr2dflows,
+  title={Roto-Translation Equivariant Super-Resolution of Two-Dimensional Flows Using Convolutional Neural Networks}, 
+  author={Yuki Yasuda},
+  year={2022},
+  eprint={2202.11099},
+  archivePrefix={arXiv},
+  primaryClass={physics.flu-dyn}
+}
+```
