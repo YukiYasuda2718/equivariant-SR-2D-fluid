@@ -7,7 +7,7 @@ from e2cnn.nn.field_type import FieldType
 logger = getLogger()
 
 
-class EqDscMs(enn.EquivariantModule):
+class EqDSCMS(enn.EquivariantModule):
     """SE2-equivariant DSC/MS"""
 
     def __init__(
@@ -20,7 +20,7 @@ class EqDscMs(enn.EquivariantModule):
         ms3_feature_type: FieldType,
         ms4_feature_type: FieldType,
     ):
-        super(EqDscMs, self).__init__()
+        super(EqDSCMS, self).__init__()
 
         self.in_type = in_type
         self.out_type = out_type

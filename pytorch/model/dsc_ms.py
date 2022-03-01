@@ -6,13 +6,13 @@ from torch import nn
 logger = getLogger()
 
 
-class DscMs(nn.Module):
+class DSCMS(nn.Module):
     """Hybrid Downsampled Skip-Connection/Multi-Scale model proposed by Fukami et al. (2019, JFM).
     Ref: http://www.seas.ucla.edu/fluidflow/lib/hDSC_MS.py
     """
 
     def __init__(self, in_channels: int, out_channels: int, factor_filter_num: int):
-        super(DscMs, self).__init__()
+        super(DSCMS, self).__init__()
 
         # Down-sampled skip-connection model (DSC)
         f_num1 = int(factor_filter_num * 32)
