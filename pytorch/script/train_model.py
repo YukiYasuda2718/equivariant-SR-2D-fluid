@@ -37,10 +37,10 @@ logger.addHandler(log_handler)
 logger.setLevel(INFO)
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--config_name", type=str)
+parser.add_argument("--config_name", type=str, required=True)
 parser.add_argument("--cuda_num", type=int, default=None)
-parser.add_argument("--data_method", type=str, default="average")
-parser.add_argument("--experiment_name", type=str, default="decaying_turbulence")
+parser.add_argument("--data_method", type=str, required=True)
+parser.add_argument("--experiment_name", type=str, required=True)
 
 
 def get_dataloaders(experiment_name: str, data_kind: str, data_dir: str, config: dict) -> dict:
