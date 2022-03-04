@@ -183,7 +183,7 @@ class VelocityDatasetForDecayingTurbulence(Dataset):
             elif self.scale % 8 == 0:
                 pass
             else:
-                raise NotImplementedError()
+                raise NotImplementedError("Not tested yet.")
 
         self.file_paths = sorted(glob(os.path.join(data_dir, "*.npy")))
         if num_simulations is not None:
