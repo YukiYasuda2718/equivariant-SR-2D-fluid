@@ -17,8 +17,7 @@ class DenseLayer(nn.Module):
         )  # `1` means concatenating along the channel dimension
 
 
-class RDB(nn.Module):
-    """Residual Dense Block (RDB)"""
+class DenseBlock(nn.Module):
 
     def __init__(
         self,
@@ -29,7 +28,7 @@ class RDB(nn.Module):
         beta: float,
         negative_slope: float,
     ):
-        super(RDB, self).__init__()
+        super(DenseBlock, self).__init__()
 
         self.beta = beta
 
@@ -70,7 +69,7 @@ class RRDB(nn.Module):
 
         self.blocks = nn.Sequential(
             *[
-                RDB(in_channels, growth_rate, num_layers, kernel_size, beta, negative_slope)
+                DenseBlock(in_channels, growth_rate, num_layers, kernel_size, beta, negative_slope)
                 for _ in range(num_blocks)
             ]
         )

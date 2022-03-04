@@ -1,0 +1,25 @@
+fortran:
+  experiment_name: barotropic_instability
+data:
+  creation_method: subsample
+  u_mean: 0.0
+  u_std: 0.42
+  v_mean: 0.0
+  v_std: 0.082
+  scale: 9
+model:
+  name: Eq-DSC-MS
+  in_channels: 2
+  out_channels: 2
+  degree_rotation: 2
+  dsc_feature_type: "regular_repr,16"
+  ms1_feature_type: "regular_repr,4"
+  ms2_feature_type: "regular_repr,4"
+  ms3_feature_type: "regular_repr,4"
+  ms4_feature_type: "regular_repr,4"
+train:
+  batch_size: 100
+  early_stopping_patience: 30
+  num_epochs: 5000
+  lr: 1.0e-03
+  seed: 42

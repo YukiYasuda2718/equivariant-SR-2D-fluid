@@ -1,0 +1,20 @@
+fortran:
+  experiment_name: decaying_turbulence
+data:
+  creation_method: average
+  velocity_mean: 0.0
+  velocity_std: 14.0
+  scale: 9
+  image_width: 128
+  image_height: 128
+model:
+  name: DSC-MS
+  in_channels: 2
+  out_channels: 2
+  factor_filter_num: 1
+train:
+  batch_size: 100
+  early_stopping_patience: 30
+  num_epochs: 5000
+  lr: 1.0e-3
+  seed: 42

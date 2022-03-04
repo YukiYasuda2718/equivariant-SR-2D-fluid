@@ -1,0 +1,24 @@
+fortran:
+  experiment_name: barotropic_instability_spectral_nudging
+data:
+  creation_method: average
+  vortex_mean: 0.0
+  vortex_std: 0.32
+  LR_name: T10
+  HR_name: T42
+model:
+  name: Eq-DSC-MS
+  in_channels: 1
+  out_channels: 1
+  degree_rotation: 2
+  dsc_feature_type: "regular_repr,16"
+  ms1_feature_type: "regular_repr,4"
+  ms2_feature_type: "regular_repr,4"
+  ms3_feature_type: "regular_repr,4"
+  ms4_feature_type: "regular_repr,4"
+train:
+  batch_size: 100
+  early_stopping_patience: 30
+  num_epochs: 5000
+  lr: 1.0e-03
+  seed: 42

@@ -1,0 +1,20 @@
+fortran:
+  experiment_name: barotropic_instability
+data:
+  creation_method: average
+  u_mean: 0.0
+  u_std: 0.42
+  v_mean: 0.0
+  v_std: 0.082
+  scale: 9
+model:
+  name: DSC-MS
+  in_channels: 2
+  out_channels: 2
+  factor_filter_num: 1
+train:
+  batch_size: 100
+  early_stopping_patience: 30
+  num_epochs: 5000
+  lr: 1.0e-03
+  seed: 42

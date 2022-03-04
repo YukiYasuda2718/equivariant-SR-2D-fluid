@@ -36,8 +36,8 @@ class DenseLayer(enn.EquivariantModule):
         )
 
 
-class RDB(enn.EquivariantModule):
-    """Equivariant version of Residual Dense Block (RDB)"""
+class DenseBlock(enn.EquivariantModule):
+    """Equivariant version of Dense Block"""
 
     def __init__(
         self,
@@ -49,7 +49,7 @@ class RDB(enn.EquivariantModule):
         alpha: float = 1.0,
         bias: bool = True,
     ):
-        super(RDB, self).__init__()
+        super(DenseBlock, self).__init__()
 
         self.in_type = in_type
         self.out_type = in_type
@@ -105,7 +105,7 @@ class RRDB(enn.EquivariantModule):
 
         self.blocks = enn.SequentialModule(
             *[
-                RDB(in_type, growth_type, num_layers, kernel_size, beta, alpha, bias)
+                DenseBlock(in_type, growth_type, num_layers, kernel_size, beta, alpha, bias)
                 for _ in range(num_blocks)
             ]
         )
