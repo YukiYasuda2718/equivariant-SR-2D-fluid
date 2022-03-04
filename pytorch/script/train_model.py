@@ -43,6 +43,31 @@ parser.add_argument("--data_method", type=str, default="average")
 parser.add_argument("--experiment_name", type=str, default="decaying_turbulence")
 
 
+def get_dataloaders(experiment_name: str, data_kind: str, data_dir: str, config: dict) -> dict:
+    if experiment_name == "decaying_turbulence":
+        if data_kind == "vorticity":
+            return make_vortex_dataloaders_for_decaying_turbulence(data_dir, config)
+        else:
+            return make_velocity_dataloaders_for_decaying_turbulence(data_dir, config)
+    elif experiment_name == "barotropic_instability":
+        if data_kind == "vorticity":
+            return make_vortex_dataloaders_for_barotropic_instability(data_dir, config)
+        else:
+            return make_velocity_dataloaders_for_barotropic_instability(data_dir, config)
+    elif experiment_name == "barotropic_instability_spectral_nudging":
+        if data_kind == "vorticity":
+            return make_vortex_dataloaders_for_barotropic_instability_spectral_nudging(
+                data_dir, config
+            )
+        else:
+            return make_velocity_dataloaders_for_barotropic_instability_spectral_nudging(
+                data_dir, config
+            )
+    else:
+        logger.error(f"{experiment_name} is not supported")
+        raise Exception(f"{experiment_name} is not supported")
+
+
 if __name__ == "__main__":
     NOW = datetime.strftime(datetime.now(), "%Y%m%dT%H%M%S")
     CONFIG_NAME = parser.parse_args().config_name
@@ -100,33 +125,7 @@ if __name__ == "__main__":
 
     # Make dataloaders and model
     set_seeds(CONFIG["train"]["seed"])
-
-    if EXPERIMENT_NAME == "decaying_turbulence":
-        if data_kind == "vorticity":
-            dict_dataloaders = make_vortex_dataloaders_for_decaying_turbulence(DATA_DIR, CONFIG)
-        else:
-            dict_dataloaders = make_velocity_dataloaders_for_decaying_turbulence(DATA_DIR, CONFIG)
-    elif EXPERIMENT_NAME == "barotropic_instability":
-        if data_kind == "vorticity":
-            dict_dataloaders = make_vortex_dataloaders_for_barotropic_instability(DATA_DIR, CONFIG)
-        else:
-            dict_dataloaders = make_velocity_dataloaders_for_barotropic_instability(
-                DATA_DIR, CONFIG
-            )
-    elif EXPERIMENT_NAME == "barotropic_instability_spectral_nudging":
-        if data_kind == "vorticity":
-            dict_dataloaders = make_vortex_dataloaders_for_barotropic_instability_spectral_nudging(
-                DATA_DIR, CONFIG
-            )
-        else:
-            dict_dataloaders = (
-                make_velocity_dataloaders_for_barotropic_instability_spectral_nudging(
-                    DATA_DIR, CONFIG
-                )
-            )
-    else:
-        logger.error(f"{EXPERIMENT_NAME} is not supported")
-        raise Exception(f"{EXPERIMENT_NAME} is not supported")
+    dict_dataloaders = get_dataloaders(EXPERIMENT_NAME, data_kind)
 
     model = make_model(CONFIG)
     model = model.to(DEVICE)
