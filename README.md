@@ -48,7 +48,16 @@ $ singularity build -f pytorch.sif ./singularity/pytorch_tsubame/pytorch.def
 
 ## How to train models
 
-WIP
+1. Start the pytorch container: `$ docker-compose up -d pytorch`
+2. Run the script as follows:
+  - `experiment_name`: experiment name. See in `./pytorch/config`
+  - `data_method`: method of creating data. See in `./pytorch/config`
+  - `config_name`: name of configuration. See in `./pytorch/config`
+
+```
+$ docker-compose exec pytorch python /workspace/pytorch/script/train_model.py \
+  --experiment_name ${experiment_name} --data_method ${data_method} --config_name ${config_name}
+```
 
 # Cite
 
