@@ -58,7 +58,12 @@ $ singularity build -f pytorch.sif ./singularity/pytorch_tsubame/pytorch.def
 
 ```
 $ docker-compose exec pytorch python /workspace/pytorch/script/train_model.py \
-  --experiment_name ${experiment_name} --data_method ${data_method} --config_name ${config_name}
+  --data_method ${data_method} --experiment_name ${experiment_name} --config_name ${config_name}
+#
+# An example
+#
+$ docker-compose exec pytorch python /workspace/pytorch/script/train_model.py \
+  --data_method average --experiment_name decaying_turbulence --config_name dscms_scale09_V
 ```
 
 # Cite
