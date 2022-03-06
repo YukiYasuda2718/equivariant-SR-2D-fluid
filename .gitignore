@@ -1,7 +1,4 @@
-log
-tmp
-Dataset*
-train.sh
+tmp*
 
 # For singularity
 .virtual_documents
