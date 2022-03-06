@@ -1,0 +1,25 @@
+fortran:
+  experiment_name: decaying_turbulence
+data:
+  creation_method: subsample
+  velocity_mean: 0.0
+  velocity_std: 14.0
+  scale: 9
+  image_width: 128
+  image_height: 128
+model:
+  name: Eq-DSC-MS
+  in_channels: 2
+  out_channels: 2
+  degree_rotation: 4
+  dsc_feature_type: "regular_repr,8"
+  ms1_feature_type: "regular_repr,2"
+  ms2_feature_type: "regular_repr,2"
+  ms3_feature_type: "regular_repr,2"
+  ms4_feature_type: "regular_repr,2"
+train:
+  batch_size: 100
+  early_stopping_patience: 30
+  num_epochs: 5000
+  lr: 1.0e-03
+  seed: 42

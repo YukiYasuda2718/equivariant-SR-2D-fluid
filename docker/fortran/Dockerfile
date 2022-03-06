@@ -7,9 +7,9 @@ WORKDIR ${HOME}
 RUN useradd -M vscode && \
     chmod -R 777 ${HOME}
 
-# Install GNU libraries and fprettify
+# Install GNU libraries to compile ISPACK
 RUN apt-get update && \
-    apt-get install -y less git curl zsh nano build-essential openmpi-bin libopenmpi-dev && \
+    apt-get install -y less git wget curl zsh nano build-essential openmpi-bin libopenmpi-dev && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

@@ -1,0 +1,21 @@
+fortran:
+  experiment_name: barotropic_instability_spectral_nudging
+data:
+  creation_method: average
+  u_mean: 0.0
+  u_std: 0.6
+  v_mean: 0.0
+  v_std: 0.1
+  LR_name: T10
+  HR_name: T42
+model:
+  name: DSC-MS
+  in_channels: 2
+  out_channels: 2
+  factor_filter_num: 1
+train:
+  batch_size: 100
+  early_stopping_patience: 30
+  num_epochs: 5000
+  lr: 1.0e-03
+  seed: 42
