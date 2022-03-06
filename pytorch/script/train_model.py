@@ -79,7 +79,7 @@ if __name__ == "__main__":
     CONFIG_PATH = f"{ROOT_DIR}/pytorch/config/{EXPERIMENT_NAME}/{DATA_METHOD}/{CONFIG_NAME}.yml"
     with open(CONFIG_PATH) as file:
         CONFIG = yaml.safe_load(file)
-    data_kind = "vorticity" if CONFIG["model"]["in_channels"] == 1 else "velocity"
+    DATA_KIND = "vorticity" if CONFIG["model"]["in_channels"] == 1 else "velocity"
     assert CONFIG["data"]["creation_method"] == DATA_METHOD
     assert CONFIG["fortran"]["experiment_name"] == EXPERIMENT_NAME
 
@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
     # Set paths
     TENSOR_BOARD_LOG_DIR = f'{ROOT_DIR}/log/pytorch/{CONFIG["fortran"]["experiment_name"]}/{CONFIG["data"]["creation_method"]}/{CONFIG["model"]["name"]}/{CONFIG_NAME}/{NOW}'
-    DATA_DIR = f'{ROOT_DIR}/data/pytorch/{CONFIG["fortran"]["experiment_name"]}/DL_data/{data_kind}'
+    DATA_DIR = f'{ROOT_DIR}/data/pytorch/{CONFIG["fortran"]["experiment_name"]}/DL_data/{DATA_KIND}'
     OUTPUT_DIR = f'{ROOT_DIR}/data/pytorch/{CONFIG["fortran"]["experiment_name"]}/DL_results/{CONFIG["data"]["creation_method"]}/{CONFIG["model"]["name"]}/{CONFIG_NAME}'
 
     os.makedirs(TENSOR_BOARD_LOG_DIR, exist_ok=True)
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     logger.info(f"EXPERIMENT_NAME = {EXPERIMENT_NAME}")
     logger.info(f"DATA_METHOD = {DATA_METHOD}")
     logger.info(f"CONFIG_PATH = {CONFIG_PATH}")
-    logger.info(f"Data kind = {data_kind}")
+    logger.info(f"Data kind = {DATA_KIND}")
     logger.info(f"TENSOR_BOARD_LOG_DIR = {TENSOR_BOARD_LOG_DIR}")
     logger.info(f"DATA_DIR = {DATA_DIR}")
     logger.info(f"OUTPUT_DIR = {OUTPUT_DIR}")
@@ -125,7 +125,7 @@ if __name__ == "__main__":
 
     # Make dataloaders and model
     set_seeds(CONFIG["train"]["seed"])
-    dict_dataloaders = get_dataloaders(EXPERIMENT_NAME, data_kind)
+    dict_dataloaders = get_dataloaders(EXPERIMENT_NAME, DATA_KIND, DATA_DIR, CONFIG)
 
     model = make_model(CONFIG)
     model = model.to(DEVICE)
