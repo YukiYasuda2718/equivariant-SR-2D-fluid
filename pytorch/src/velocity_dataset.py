@@ -339,6 +339,7 @@ class VelocityDatasetForBarotropicInstability(Dataset):
         interpolation: InterpolationMode = InterpolationMode.BICUBIC,
         dtype: torch.dtype = torch.float32,
         lr_method: str = None,
+        num_simulations: int = None,
     ):
         self.u_mean, self.u_std = u_mean, u_std
         self.v_mean, self.v_std = v_mean, v_std
@@ -349,14 +350,12 @@ class VelocityDatasetForBarotropicInstability(Dataset):
         self.interpolation = interpolation
         self.dtype = dtype
 
-        self.fit_image = False
-        if self.scale % 2 == 1:
-            self.fit_image = True
-            logger.info(f"Scale = {self.scale} (odd number), so fit HR images each time.")
-        else:
-            raise Exception("Not tested yet.")
+        self.fit_image = True
+        logger.info(f"Scale = {self.scale} and fit HR images each time.")
 
         self.file_paths = sorted(glob(os.path.join(data_dir, "*.npy")))
+        if num_simulations is not None:
+            self.file_paths = self._extract_file_paths(data_dir, num_simulations)
         logger.info(f"Data dir = {data_dir}")
         logger.info(f"Num of files = {len(self.file_paths)}")
 
@@ -373,6 +372,30 @@ class VelocityDatasetForBarotropicInstability(Dataset):
             )
         elif self.lr_method == "subsample":
             logger.info("Subsampling is used to create LR data")
+
+    def _extract_file_paths(self, data_dir: str, num_simulations: int) -> List[str]:
+        file_paths = pd.Series(glob(os.path.join(data_dir, "*.npy")))
+
+        simulation_names = file_paths.apply(
+            lambda s: "_".join(os.path.basename(s).split("_")[:2])
+        ).drop_duplicates()
+
+        simulation_names = sorted(simulation_names.to_list())
+        total_num = len(simulation_names)
+
+        simulation_names = set(simulation_names[:num_simulations])
+        actual_num = len(simulation_names)
+
+        logger.info(f"Total simulation num = {total_num}, but only {actual_num} are used.")
+
+        are_used = file_paths.apply(
+            lambda s: "_".join(os.path.basename(s).split("_")[:2]) in simulation_names
+        )
+        file_paths = file_paths[are_used].to_list()
+
+        logger.info(f"Extracted file num = {len(file_paths)}")
+
+        return file_paths
 
     def _average(self, hr_data):
         assert len(hr_data.shape) == 3
