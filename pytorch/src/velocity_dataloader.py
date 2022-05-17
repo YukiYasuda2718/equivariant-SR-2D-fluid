@@ -144,6 +144,7 @@ def make_velocity_dataloaders_for_barotropic_instability(
             v_std=config["data"]["v_std"],
             scale=config["data"]["scale"],
             lr_method=config["data"]["creation_method"],
+            num_simulations=config["data"].get(f"num_simulations_{kind}", None),
         )
 
         dict_dataloaders[kind] = DataLoader(
