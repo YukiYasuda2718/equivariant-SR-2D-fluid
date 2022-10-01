@@ -154,17 +154,7 @@ class VortexDatasetForDecayingTurbulence(Dataset):
         self.interpolation = interpolation
         self.dtype = dtype
 
-        self.fit_image = False
-        if self.scale % 2 == 1:
-            self.fit_image = True
-            logger.info(f"Scale = {self.scale} (odd number), so fit HR images each time.")
-        else:
-            if self.scale % 4 == 0:
-                pass
-            elif self.scale % 8 == 0:
-                pass
-            else:
-                raise NotImplementedError("Not tested yet.")
+        self.fit_image = True
 
         self.file_paths = sorted(glob(os.path.join(data_dir, "*.npy")))
         if num_simulations is not None:
@@ -289,12 +279,7 @@ class VortexDatasetForBarotropicInstability(Dataset):
         self.interpolation = interpolation
         self.dtype = dtype
 
-        self.fit_image = False
-        if self.scale % 2 == 1:
-            self.fit_image = True
-            logger.info(f"Scale = {self.scale} (odd number), so fit HR images each time.")
-        else:
-            raise Exception("Not tested yet.")
+        self.fit_image = True
 
         self.file_paths = sorted(glob(os.path.join(data_dir, "*.npy")))
         logger.info(f"Data dir = {data_dir}")
