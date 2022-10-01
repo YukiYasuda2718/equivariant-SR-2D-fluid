@@ -5,7 +5,7 @@ data:
   u_mean: 0.0
   u_std: 0.42
   v_mean: 0.0
-  v_std: 0.082
+  v_std: 0.42
   scale: 9
 model:
   name: Eq-RRDN
