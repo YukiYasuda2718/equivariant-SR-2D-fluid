@@ -44,26 +44,25 @@ def calc_energy_spectrum_from_uv(U: np.ndarray, V: np.ndarray) -> np.ndarray:
     assuming the domain is [0, 2 \pi] x [0, 2\pi]
     """
     assert U.shape == V.shape
-    assert len(U.shape) == 2
-    SU = np.fft.fft2(U)  # spectral data
-    SV = np.fft.fft2(V)  # spectral data
-    ene_spectrum = np.zeros(sum(SU.shape))
+    SU = np.fft.fft2(U, axes=(-2, -1))  # spectral data
+    SV = np.fft.fft2(V, axes=(-2, -1))  # spectral data
+    ene_spectrum = np.zeros(SU.shape[:-2] + (sum(SU.shape[-2:]),))
 
     max_idx = 0
-    for i in range(SU.shape[0]):
-        kx = get_wavenumber(i, SU.shape[0])
-        for j in range(SU.shape[1]):
-            ky = get_wavenumber(j, SU.shape[1])
+    for i in range(SU.shape[-2]):
+        kx = get_wavenumber(i, SU.shape[-2])
+        for j in range(SU.shape[-1]):
+            ky = get_wavenumber(j, SU.shape[-1])
 
             k2 = kx ** 2 + ky ** 2
             idx = int(np.sqrt(k2) + 0.5)
 
-            ene_spectrum[idx] += np.abs(SU[i, j]) ** 2 + np.abs(SV[i, j]) ** 2
+            ene_spectrum[..., idx] += np.abs(SU[..., i, j]) ** 2 + np.abs(SV[..., i, j]) ** 2
             if idx > max_idx:
                 max_idx = idx
 
     # The denominator is a normalization constant due to numpy fft
-    return 0.5 * ene_spectrum[:max_idx] / (SU.shape[0] * SU.shape[1]) ** 2
+    return 0.5 * ene_spectrum[..., :max_idx] / (SU.shape[-2] * SU.shape[-1]) ** 2
 
 
 def calc_enstrophy_spectrum(Q: np.ndarray) -> np.ndarray:
@@ -71,26 +70,26 @@ def calc_enstrophy_spectrum(Q: np.ndarray) -> np.ndarray:
     Z(k) = 1/2 \sum |q|^2 k d\theta
     assuming the domain is [0, 2 \pi] x [0, 2\pi]
     """
-    S = np.fft.fft2(Q)  # spectral data
-    ens_spectrum = np.zeros(sum(S.shape))
+    S = np.fft.fft2(Q, axes=(-2, -1))  # spectral data
+    ens_spectrum = np.zeros(S.shape[:-2] + (sum(S.shape[-2:]),))
 
     max_idx = 0
-    for i in range(S.shape[0]):
-        kx = get_wavenumber(i, S.shape[0])
-        for j in range(S.shape[1]):
-            ky = get_wavenumber(j, S.shape[1])
+    for i in range(S.shape[-2]):
+        kx = get_wavenumber(i, S.shape[-2])
+        for j in range(S.shape[-1]):
+            ky = get_wavenumber(j, S.shape[-1])
 
             k2 = kx ** 2 + ky ** 2
             if k2 == 0:
                 continue  # kx and ky == 0
 
             idx = int(np.sqrt(k2) + 0.5)
-            ens_spectrum[idx] += np.abs(S[i, j]) ** 2
+            ens_spectrum[..., idx] += np.abs(S[..., i, j]) ** 2
             if idx > max_idx:
                 max_idx = idx
 
     # The denominator is a normalization constant due to numpy fft
-    return 0.5 * ens_spectrum[:max_idx] / (S.shape[0] * S.shape[1]) ** 2
+    return 0.5 * ens_spectrum[..., :max_idx] / (S.shape[-2] * S.shape[-1]) ** 2
 
 
 def calc_Re(vortex_field: np.ndarray, nu: float) -> float:
@@ -120,40 +119,40 @@ def calc_stream_function(Z: np.ndarray) -> np.ndarray:
 
 
 def calc_velocity(Z: np.ndarray, is_xcomponent: bool) -> np.ndarray:
-    S = np.fft.fft2(Z)  # spectral data
+    S = np.fft.fft2(Z, axes=(-2, -1))  # spectral data
     V = np.zeros_like(S)
-    for i in range(S.shape[0]):
-        kx = get_wavenumber(i, S.shape[0])
-        for j in range(S.shape[1]):
-            ky = get_wavenumber(j, S.shape[1])
+    for i in range(S.shape[-2]):
+        kx = get_wavenumber(i, S.shape[-2])
+        for j in range(S.shape[-1]):
+            ky = get_wavenumber(j, S.shape[-1])
 
             k2 = np.abs(kx ** 2 + ky ** 2)
             if k2 == 0:
-                V[i, j] = 0.0
+                V[..., i, j] = 0.0
                 continue  # kx and ky == 0
 
-            psi = -S[i, j] / k2  # stream function
+            psi = -S[..., i, j] / k2  # stream function
 
             if is_xcomponent:
-                V[i, j] = -(ky * 1j) * psi
+                V[..., i, j] = -(ky * 1j) * psi
             else:
-                V[i, j] = (kx * 1j) * psi
-    return np.real(np.fft.ifft2(V))
+                V[..., i, j] = (kx * 1j) * psi
+    return np.real(np.fft.ifft2(V, axes=(-2, -1)))
 
 
 def calc_derivative(G: np.ndarray, is_x: bool) -> np.ndarray:
-    S = np.fft.fft2(G)  # spectral data
+    S = np.fft.fft2(G, axes=(-2, -1))  # spectral data
     D = np.zeros_like(S)
-    for i in range(S.shape[0]):
-        kx = get_wavenumber(i, S.shape[0])
-        for j in range(S.shape[1]):
-            ky = get_wavenumber(j, S.shape[1])
+    for i in range(S.shape[-2]):
+        kx = get_wavenumber(i, S.shape[-2])
+        for j in range(S.shape[-1]):
+            ky = get_wavenumber(j, S.shape[-1])
 
             if is_x:
-                D[i, j] = (kx * 1j) * S[i, j]
+                D[..., i, j] = (kx * 1j) * S[..., i, j]
             else:
-                D[i, j] = (ky * 1j) * S[i, j]
-    return np.real(np.fft.ifft2(D))
+                D[..., i, j] = (ky * 1j) * S[..., i, j]
+    return np.real(np.fft.ifft2(D, axes=(-2, -1)))
 
 
 def reflect(Z: np.ndarray) -> np.ndarray:
@@ -175,15 +174,14 @@ def calc_velocity_using_sine_transform(Z: np.ndarray, is_xcomponent: bool) -> np
 
 
 def reflect_velocity(data: np.ndarray, is_u: bool) -> np.ndarray:
-    assert len(data.shape) == 2
 
-    reflected = np.zeros((data.shape[0], (2 * data.shape[1] - 1)))
-    reflected[:, : data.shape[1]] = data
+    reflected = np.zeros(data.shape[:-2] + (data.shape[-2], (2 * data.shape[-1] - 1)))
+    reflected[..., : data.shape[-1]] = data
 
     if is_u:
-        reflected[:, data.shape[1] :] = data[:, ::-1][:, 1:]  # for cosine transform
+        reflected[..., data.shape[-1] :] = data[..., ::-1][..., 1:]  # for cosine transform
     else:
-        reflected[:, data.shape[1] :] = -data[:, ::-1][:, 1:]  # for sine transform
+        reflected[..., data.shape[-1] :] = -data[..., ::-1][..., 1:]  # for sine transform
 
     return reflected
 
@@ -203,9 +201,8 @@ def calc_vorticity_using_sine_cosine_transform(u: np.ndarray, v: np.ndarray) -> 
 
 
 def calc_vorticity(uv):
-    assert len(uv.shape) == 3
-    assert uv.shape[0] == 2
-    u, v = uv[0, :, :], uv[1, :, :]
+    assert uv.shape[-3] == 2  # u and v comnmponents
+    u, v = uv[..., 0, :, :], uv[..., 1, :, :]
     z = calc_derivative(v, is_x=True) - calc_derivative(u, is_x=False)
     return z
 
@@ -269,17 +266,16 @@ def calc_spectrum_set_from_z_after_scaling(z: np.ndarray, config: dict) -> dict:
 
 
 def calc_spectrum_set_from_uv_after_scaling(uv: np.ndarray, config: dict) -> dict:
-    assert len(uv.shape) == 3
-    assert uv.shape[0] == 2
+    assert uv.shape[-3] == 2  # u and v components
 
     _uv = uv * config["data"]["velocity_std"] + config["data"]["velocity_mean"]
     z = calc_vorticity(_uv)
     ens_spec = calc_enstrophy_spectrum(z)
-    ene_spec = calc_energy_spectrum_from_uv(_uv[0], _uv[1])
+    ene_spec = calc_energy_spectrum_from_uv(_uv[..., 0, :, :], _uv[..., 1, :, :])
 
-    assert len(ens_spec) == len(ene_spec)
+    assert ens_spec.shape == ene_spec.shape
 
-    ks = np.arange(len(ene_spec))
+    ks = np.arange(ene_spec.shape[-1])
 
     return {
         "energy_spectrum": ene_spec,
@@ -314,27 +310,25 @@ def calc_spectrum_set_from_z_after_scaling_using_sine_transform(
 def calc_spectrum_set_from_uv_after_scaling_using_sine_cosine_transform(
     uv: np.ndarray, config: dict
 ) -> dict:
-    assert len(uv.shape) == 3
-    assert uv.shape[0] == 2
+    assert uv.shape[-3] == 2  # u and v components
 
     _uv = np.zeros_like(uv)
 
-    _uv[0] = uv[0] * config["data"]["u_std"] + config["data"]["u_mean"]
-    _uv[1] = uv[1] * config["data"]["v_std"] + config["data"]["v_mean"]
-    _u = reflect_velocity(_uv[0], is_u=True)
-    _v = reflect_velocity(_uv[1], is_u=False)
-    _uv = np.stack([_u, _v])
+    _uv[..., 0, :, :] = uv[..., 0, :, :] * config["data"]["u_std"] + config["data"]["u_mean"]
+    _uv[..., 1, :, :] = uv[..., 1, :, :] * config["data"]["v_std"] + config["data"]["v_mean"]
+    _u = reflect_velocity(_uv[..., 0, :, :], is_u=True)
+    _v = reflect_velocity(_uv[..., 1, :, :], is_u=False)
+    _uv = np.stack([_u, _v], axis=-3)
 
-    assert len(_uv.shape) == 3
-    assert _uv.shape[0] == 2
+    assert _uv.shape[-3] == 2  # u and v components
 
     z = calc_vorticity(_uv)
     ens_spec = calc_enstrophy_spectrum(z) / 4.0
-    ene_spec = calc_energy_spectrum_from_uv(_uv[0], _uv[1]) / 4.0
+    ene_spec = calc_energy_spectrum_from_uv(_uv[..., 0, :, :], _uv[..., 1, :, :]) / 4.0
 
-    assert len(ens_spec) == len(ene_spec)
+    assert ens_spec.shape == ene_spec.shape
 
-    ks = np.arange(len(ene_spec))
+    ks = np.arange(ene_spec.shape[-1])
 
     return {
         "energy_spectrum": ene_spec,
