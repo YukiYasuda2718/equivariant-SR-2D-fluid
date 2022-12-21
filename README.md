@@ -1,4 +1,4 @@
-This repository contains the source code used in [*Roto-Translation Equivariant Super-Resolution of Two-Dimensional Flows Using Convolutional Neural Networks*](https://arxiv.org/abs/2202.11099).
+This repository contains the source code used in [*Rotationally Equivariant Super-Resolution of Velocity Fields in Two-Dimensional Fluids Using Convolutional Neural Networks*](https://arxiv.org/abs/2202.11099).
 
 - [Setup](#setup)
 - [Docker containers](#docker-containers)
@@ -69,12 +69,13 @@ $ docker-compose exec pytorch python /workspace/pytorch/script/train_model.py \
 # Cite
 
 ```
-@misc{yasuda2022eqsr2dflows,
-  title={Roto-Translation Equivariant Super-Resolution of Two-Dimensional Flows Using Convolutional Neural Networks}, 
-  author={Yuki Yasuda},
-  year={2022},
-  eprint={2202.11099},
-  archivePrefix={arXiv},
-  primaryClass={physics.flu-dyn}
+@misc{
+  doi = {10.48550/ARXIV.2202.11099},
+  url = {https://arxiv.org/abs/2202.11099},
+  author = {Yasuda, Yuki and Onishi, Ryo},
+  title = {Rotationally Equivariant Super-Resolution of Velocity Fields in Two-Dimensional Fluids Using Convolutional Neural Networks},
+  publisher = {arXiv},
+  year = {2022},
+  copyright = {arXiv.org perpetual, non-exclusive license}
 }
 ```
