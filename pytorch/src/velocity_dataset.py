@@ -1,8 +1,10 @@
 import os
+import random
 from glob import glob
 from logging import getLogger
 from typing import List
 
+import e2cnn
 import numpy as np
 import pandas as pd
 import torch
@@ -29,6 +31,26 @@ def robust_scale(x: torch.Tensor, mean: float, scale: float) -> torch.Tensor:
 
 def robust_scale_inverse(x: torch.Tensor, mean: float, scale: float) -> torch.Tensor:
     return x * scale + mean
+
+
+def rotate_vector_field(lr: torch.Tensor, hr: torch.Tensor, degrees: int = 4):
+    assert lr.ndim == hr.ndim == 3  # channel, x, y
+    assert lr.shape[0] == hr.shape[0] == 2  # u and v components
+
+    r2_act = e2cnn.gspaces.Rot2dOnR2(N=degrees)
+
+    feat_type_lr = e2cnn.nn.FieldType(r2_act, [r2_act.irrep(1)])
+    _lr = e2cnn.nn.GeometricTensor(lr[None, ...], feat_type_lr)  # add batch dim
+
+    feat_type_hr = e2cnn.nn.FieldType(r2_act, [r2_act.irrep(1)])
+    _hr = e2cnn.nn.GeometricTensor(hr[None, ...], feat_type_hr)  # add batch dim
+
+    g = random.randint(0, degrees - 1)
+    # a rotation of 0, 90, 180, 270 deg, if degrees = 4
+    logger.debug(g)
+
+    # Convert to torch.Tensor with removing batch dim
+    return _lr.transform(g).tensor.squeeze(), _hr.transform(g).tensor.squeeze()
 
 
 class VelocityDatasetForBarotropicInstabilitySpectralNudging(Dataset):
@@ -165,6 +187,7 @@ class VelocityDatasetForDecayingTurbulence(Dataset):
         dtype: torch.dtype = torch.float32,
         lr_method: str = None,
         num_simulations: int = None,
+        use_data_augmentation: bool = False
     ):
         self.mean, self.std = mean, std
         logger.info(f"Velocity: mean = {self.mean}, std = {self.std}")
@@ -172,6 +195,9 @@ class VelocityDatasetForDecayingTurbulence(Dataset):
         self.scale = scale
         self.interpolation = interpolation
         self.dtype = dtype
+
+        self.use_da = use_data_augmentation
+        logger.info(f"Use data augmentation = {self.use_da}")
 
         self.fit_image = True
         logger.info(f"Scale = {self.scale} and fit HR images each time.")
@@ -297,6 +323,12 @@ class VelocityDatasetForDecayingTurbulence(Dataset):
 
         hr_velocity = torch.cat([hr_u, hr_v])
         lr_velocity = torch.cat([lr_u, lr_v])
+
+        if self.use_da:
+            logger.debug("Data augmentation is used.")
+            lr_velocity, hr_velocity = rotate_vector_field(
+                lr=lr_velocity, hr=hr_velocity
+            )
 
         assert hr_velocity.shape[0] == 2
         assert lr_velocity.shape[0] == 2
