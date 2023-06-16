@@ -71,7 +71,7 @@ $ docker-compose exec pytorch python /workspace/pytorch/script/train_model.py \
 ```
 @article{
     author = {Yasuda, Yuki and Onishi, Ryo},
-    title = "{Rotationally equivariant super-resolution of velocity fields in two-dimensional flows using convolutional neural networks}",
+    title = {Rotationally equivariant super-resolution of velocity fields in two-dimensional flows using convolutional neural networks},
     journal = {APL Machine Learning},
     volume = {1},
     number = {2},
